@@ -445,7 +445,7 @@ var kriging = function() {
     };
 
     // Plotting on the DOM
-    kriging.plot = function(canvas, grid, xlim, ylim, colors) {
+    kriging.plot = function(canvas, grid, xlim, ylim, colors, round) {
 	// Clear screen 
 	var ctx = canvas.getContext("2d");
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -455,8 +455,16 @@ var kriging = function() {
 	var i, j, x, y, z;
 	var n = grid.length;
 	var m = grid[0].length;
-	var wx = Math.ceil(grid.width*canvas.width/(xlim[1]-xlim[0]));
-	var wy = Math.ceil(grid.width*canvas.height/(ylim[1]-ylim[0]));
+
+	var wx, wy;
+	if (round) {
+		wx = Math.ceil(grid.width * canvas.width / (xlim[1] - xlim[0]));
+		wy = Math.ceil(grid.width * canvas.height / (ylim[1] - ylim[0]));
+	} else {
+		wx = (grid.width * canvas.width / (xlim[1] - xlim[0]));
+		wy = (grid.width * canvas.height / (ylim[1] - ylim[0]));
+	}
+
 	for(i=0;i<n;i++)
 	    for(j=0;j<m;j++) {
 		if(grid[i][j]==undefined) continue;
@@ -467,7 +475,17 @@ var kriging = function() {
 		if(z>1.0) z = 1.0;
 
 		ctx.fillStyle = colors[Math.floor((colors.length-1)*z)];
-		ctx.fillRect(Math.round(x-wx/2), Math.round(y-wy/2), wx, wy);
+
+		var t1, t2;
+		if (round) {
+			t1 = Math.round(x - wx / 2);
+			t2 = Math.round(y - wy / 2);
+		} else {
+			t1 = (x - wx / 2);
+			t2 = (y - wy / 2);
+		}
+
+		ctx.fillRect(t1, t2, wx, wy);
 	    }
 
     };
